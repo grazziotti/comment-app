@@ -1,18 +1,18 @@
 'use client'
 
 import Comment from './Comment'
+import CommentSkeleton from './Comment/CommentSkeleton'
 
 import { usePublicCommentData } from '@/hooks/usePublicCommentData'
 
 export default function Comments() {
   const { isPending, error, data } = usePublicCommentData()
 
-  if (isPending) return 'Loading...'
-
   if (error) return 'An error has occurred: ' + error.message
 
   return (
     <ul>
+      {isPending && <CommentSkeleton count={4} />}
       {data &&
         data.map((comment) => (
           <li key={comment.id}>
