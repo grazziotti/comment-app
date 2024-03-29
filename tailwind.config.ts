@@ -1,20 +1,24 @@
-import type { Config } from "tailwindcss";
+import type { Config } from 'tailwindcss'
 
 const config: Config = {
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}'
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-      },
-    },
+      colors: {
+        primary: 'rgb(var(--color-primary) / <alpha-value>)',
+        secondary: 'rgb(var(--color-secondary) / <alpha-value>)',
+        textTitle: 'rgb(var(--color-text-title) / <alpha-value>)',
+        textBody: 'rgb(var(--color-text-body) / <alpha-value>)',
+        target: 'rgb(var(--color-target) / <alpha-value>)',
+        targetInactive: 'rgb(var(--color-target-inactive) / <alpha-value>)',
+        delete: 'rgb(var(--color-delete) / <alpha-value>)'
+      }
+    }
   },
-  plugins: [],
-};
-export default config;
+  plugins: []
+}
+export default config
