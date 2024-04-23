@@ -1,3 +1,10 @@
+import Comments from '@/components/Comments'
+import Container from '@/components/Container'
+
 export default function Home() {
-  return <main>...</main>
+  return (
+    <Container>
+      <Comments />
+    </Container>
+  )
 }

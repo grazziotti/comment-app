@@ -3,7 +3,10 @@ import { Rubik } from 'next/font/google'
 
 import './globals.css'
 
+import Header from '@/components/Header'
+
 import ReactQueryProvider from '@/providers/ReactQueryProvider'
+import NextAuthSessionProvider from '@/providers/sessionProvider'
 
 const rubik = Rubik({
   subsets: ['latin'],
@@ -17,16 +20,24 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({
-  children
+  children,
+  parallels
 }: Readonly<{
   children: React.ReactNode
+  parallels: React.ReactNode
 }>) {
   return (
     <html lang="en">
       <body className={rubik.className}>
-        <ReactQueryProvider>
-          <main>{children}</main>
-        </ReactQueryProvider>
+        <NextAuthSessionProvider>
+          <ReactQueryProvider>
+            <Header />
+            <main>
+              {parallels}
+              {children}
+            </main>
+          </ReactQueryProvider>
+        </NextAuthSessionProvider>
       </body>
     </html>
   )
