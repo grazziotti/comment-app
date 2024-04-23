@@ -8,7 +8,7 @@ export default async function Header() {
   const session = await getServerSession()
 
   return (
-    <header className=" py-6">
+    <header className="py-6">
       <Container>
         <div className="flex items-center justify-between rounded-xl bg-primary p-6 shadow-sm">
           <Logo />

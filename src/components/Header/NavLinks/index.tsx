@@ -6,7 +6,7 @@ export default function NavLinks() {
       <ul className="flex items-center gap-x-4">
         <li>
           <Link
-            href={'/auth/login'}
+            href={'/login'}
             className="font-medium text-target transition-colors hover:text-targetInactive"
           >
             Login
@@ -14,7 +14,7 @@ export default function NavLinks() {
         </li>
         <li>
           <Link
-            href={'/auth/signup'}
+            href={'/signup'}
             className="rounded-lg bg-target px-4 py-2 font-medium text-primary transition-colors hover:bg-targetInactive"
           >
             Sign Up
