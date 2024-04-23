@@ -15,7 +15,7 @@ interface IUserInfo {
   username: string
 }
 
-interface IReply extends ICommentBase {
+export interface IReply extends ICommentBase {
   replyTo?: {
     user: IUserInfo
   }
