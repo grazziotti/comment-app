@@ -38,7 +38,7 @@ export default function Comment({
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <div className="h-8 w-8 rounded-full bg-secondary"></div>
-            <span tabIndex={0} className="text-title ml-3 font-medium">
+            <span tabIndex={0} className="ml-3 font-medium text-textTitle">
               {username}
             </span>
             <span tabIndex={0} className="ml-4 text-textBody">
@@ -52,8 +52,8 @@ export default function Comment({
         </div>
         <p tabIndex={0} className="break-words leading-normal text-textBody">
           {replyTo && (
-            <span className="font-medium text-target">@{replyTo}</span>
-          )}{' '}
+            <span className="mr-1 font-medium text-target">@{replyTo}</span>
+          )}
           {content}
         </p>
       </div>
