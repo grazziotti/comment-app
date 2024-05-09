@@ -13,7 +13,9 @@ type InputProps = {
   label?: string
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
   value?: string
+  onFocus?: () => void
   isError?: boolean
+  onBlur?: () => void
 }
 
 export default function Input({
@@ -25,7 +27,9 @@ export default function Input({
   required,
   onChange,
   value,
-  isError
+  isError,
+  onFocus,
+  onBlur
 }: InputProps) {
   const [showPassword, setShowPassword] = useState(false)
 
@@ -39,12 +43,12 @@ export default function Input({
       {label && (
         <label htmlFor={id} className="text-textTitle">
           {label}
-          {required && <span className="text-delete">*</span>}
+          {required && <span className="text-deleteColor">*</span>}
         </label>
       )}
       <div className="relative flex items-center">
         <input
-          className={`mb-1 mt-1 ${isError && 'border-delete'} flex w-full items-center rounded-xl border-2 border-gray-200 px-4 py-2 pr-10 text-textBody outline-none transition-colors hover:border-target focus:border-target`}
+          className={`mb-1 mt-1 ${isError ? 'border-deleteColor' : ''} flex w-full items-center rounded-xl border-2 px-4 py-2 pr-10 text-textBody outline-none transition-colors hover:border-target focus:border-target`}
           id={id}
           type={type === 'text' ? 'text' : showPassword ? 'text' : 'password'}
           name={name}
@@ -52,6 +56,8 @@ export default function Input({
           placeholder={placeholder}
           onChange={onChange}
           value={value}
+          onFocus={onFocus}
+          onBlur={onBlur}
         />
         {type === 'password' && (
           <button
