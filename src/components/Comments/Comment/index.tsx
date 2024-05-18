@@ -1,6 +1,6 @@
 import { useSession } from 'next-auth/react'
 import { redirect } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import AddComment from '../AddComment'
 
@@ -32,6 +32,15 @@ export default function Comment({
   const formattedTimeDifference = formatRelativeTime(timeDifference)
 
   const [showAddCommentReply, setShowAddReplyComment] = useState(false)
+  const [isYou, setIsYou] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (session) {
+      if (session.user.name === username) {
+        setIsYou(true)
+      }
+    }
+  }, [session])
 
   function handleReplyBtnClick() {
     if (!session) {
@@ -64,17 +73,24 @@ export default function Comment({
               <span tabIndex={0} className="ml-3 font-medium text-textTitle">
                 {username}
               </span>
+              {isYou && (
+                <span className="ml-2 rounded-[4px] bg-target px-2 pb-[3px] pt-[2px] text-xs font-medium text-primary">
+                  you
+                </span>
+              )}
               <span tabIndex={0} className="ml-4 text-textBody">
                 {formattedTimeDifference} ago
               </span>
             </div>
-            <button
-              onClick={handleReplyBtnClick}
-              className="flex items-start gap-x-1 font-bold text-target transition-colors hover:text-targetInactive"
-            >
-              <Reply size={18} strokeWidth={4} />
-              Reply
-            </button>
+            <div className="flex items-center gap-x-4">
+              <button
+                onClick={handleReplyBtnClick}
+                className="flex items-start gap-x-1 font-bold text-target transition-colors hover:text-targetInactive"
+              >
+                <Reply size={18} strokeWidth={4} />
+                Reply
+              </button>
+            </div>
           </div>
           <p tabIndex={0} className="break-words leading-normal text-textBody">
             {replyTo && (
