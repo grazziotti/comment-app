@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import AddComment from '../AddComment'
 
 import { formatRelativeTime } from '@/utils/formatRelativeTime'
-import { Minus, Plus, Reply } from 'lucide-react'
+import { Minus, Pencil, Plus, Reply, Trash2 } from 'lucide-react'
 
 type Props = {
   commentId: string
@@ -52,6 +52,18 @@ export default function Comment({
     setShowAddReplyComment(!showAddCommentReply)
   }
 
+  function handleEditBtnClick() {
+    if (!session) {
+      redirect('/login')
+    }
+  }
+
+  function handleDeleteBtnClick() {
+    if (!session) {
+      redirect('/login')
+    }
+  }
+
   return (
     <div>
       <div className="mt-6 flex w-full rounded-xl bg-white p-6">
@@ -83,13 +95,41 @@ export default function Comment({
               </span>
             </div>
             <div className="flex items-center gap-x-4">
-              <button
-                onClick={handleReplyBtnClick}
-                className="flex items-start gap-x-1 font-bold text-target transition-colors hover:text-targetInactive"
-              >
-                <Reply size={18} strokeWidth={4} />
-                Reply
-              </button>
+              {!isYou && (
+                <button
+                  onClick={handleReplyBtnClick}
+                  className="flex items-start gap-x-1 font-bold text-target transition-colors hover:text-targetInactive"
+                >
+                  <Reply size={18} strokeWidth={4} />
+                  Reply
+                </button>
+              )}
+              {isYou && (
+                <>
+                  <button
+                    onClick={handleDeleteBtnClick}
+                    className="flex items-start gap-x-1 font-bold text-deleteColor transition-colors hover:text-red-200"
+                  >
+                    <Trash2
+                      size={15}
+                      strokeWidth={4}
+                      className="translate-y-1"
+                    />
+                    Delete
+                  </button>
+                  <button
+                    onClick={handleEditBtnClick}
+                    className="flex items-start gap-x-1 font-bold text-target transition-colors hover:text-targetInactive"
+                  >
+                    <Pencil
+                      size={15}
+                      strokeWidth={4}
+                      className="translate-y-1"
+                    />
+                    Edit
+                  </button>
+                </>
+              )}
             </div>
           </div>
           <p tabIndex={0} className="break-words leading-normal text-textBody">
