@@ -2,6 +2,8 @@ import { useSession } from 'next-auth/react'
 import { redirect } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
+import DeleteCommentModal from '@/components/DeleteCommentModal'
+
 import AddComment from '../AddComment'
 
 import { formatRelativeTime } from '@/utils/formatRelativeTime'
@@ -32,6 +34,7 @@ export default function Comment({
   const formattedTimeDifference = formatRelativeTime(timeDifference)
 
   const [showAddCommentReply, setShowAddReplyComment] = useState(false)
+  const [showDeleteCommentModal, setShowDeleteCommentModal] = useState(false)
   const [isYou, setIsYou] = useState<boolean>(false)
 
   useEffect(() => {
@@ -40,7 +43,7 @@ export default function Comment({
         setIsYou(true)
       }
     }
-  }, [session])
+  }, [session, username])
 
   function handleReplyBtnClick() {
     if (!session) {
@@ -62,6 +65,12 @@ export default function Comment({
     if (!session) {
       redirect('/login')
     }
+
+    setShowDeleteCommentModal(true)
+  }
+
+  function closeDeleteCommentModal() {
+    setShowDeleteCommentModal(false)
   }
 
   return (
@@ -145,6 +154,13 @@ export default function Comment({
           replyToId={commentId}
           replyTo={username}
           onDone={() => setShowAddReplyComment(false)}
+        />
+      )}
+      {showDeleteCommentModal && (
+        <DeleteCommentModal
+          commentId={commentId}
+          username={username}
+          closeModal={closeDeleteCommentModal}
         />
       )}
     </div>
