@@ -1,12 +1,14 @@
 import { useSession } from 'next-auth/react'
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-import DeleteCommentModal from '@/components/DeleteCommentModal'
-
 import AddComment from '../AddComment'
+import DeleteCommentModal from './DeleteCommentModal'
 
+import { useUpdateComment } from '@/hooks/useUpdateComment'
+import { filterReply } from '@/utils/filterReply'
 import { formatRelativeTime } from '@/utils/formatRelativeTime'
+import { isEmptyOrSpaces } from '@/utils/isEmptyOrSpaces'
 import { Minus, Pencil, Plus, Reply, Trash2 } from 'lucide-react'
 
 type Props = {
@@ -16,6 +18,7 @@ type Props = {
   createdAt: Date
   score: number
   replyTo?: string
+  updated?: boolean
 }
 
 export default function Comment({
@@ -24,18 +27,49 @@ export default function Comment({
   username,
   createdAt,
   score,
-  replyTo
+  replyTo,
+  updated
 }: Props) {
   const { data: session } = useSession()
+  const { mutate, isSuccess: updateSuccess } = useUpdateComment()
+  const router = useRouter()
 
   const currentTime = new Date()
   const createdAtDate = new Date(createdAt)
   const timeDifference = currentTime.getTime() - createdAtDate.getTime()
   const formattedTimeDifference = formatRelativeTime(timeDifference)
 
+  const [isYou, setIsYou] = useState<boolean>(false)
+  const [comment, setComment] = useState('')
   const [showAddCommentReply, setShowAddReplyComment] = useState(false)
   const [showDeleteCommentModal, setShowDeleteCommentModal] = useState(false)
-  const [isYou, setIsYou] = useState<boolean>(false)
+  const [isCommentAllowed, setIsCommentAllowed] = useState<boolean>()
+  const [isEditing, setIsEditing] = useState(false)
+  const [editedComment, setEditedComment] = useState('')
+  const [isUpdated, setIsUpdated] = useState<boolean>()
+
+  useEffect(() => {
+    setComment(content)
+    setIsUpdated(updated)
+  }, [])
+
+  useEffect(() => {
+    if (updateSuccess) {
+      if (replyTo) {
+        const filteredReply = filterReply(editedComment.trim(), replyTo).trim()
+        setComment(filteredReply)
+      } else {
+        setComment(editedComment.trim())
+      }
+
+      setIsEditing(false)
+      setIsUpdated(true)
+    }
+  }, [updateSuccess])
+
+  useEffect(() => {
+    checkCommentAllowed()
+  }, [editedComment])
 
   useEffect(() => {
     if (session) {
@@ -45,9 +79,18 @@ export default function Comment({
     }
   }, [session, username])
 
+  useEffect(() => {
+    if (isEditing) {
+      replyTo
+        ? setEditedComment(`@${replyTo}, ${comment}`)
+        : setEditedComment(comment)
+    }
+  }, [isEditing])
+
   function handleReplyBtnClick() {
     if (!session) {
-      redirect('/login')
+      router.push('/login')
+      return
     }
 
     if (session.user.name === username) return
@@ -57,13 +100,37 @@ export default function Comment({
 
   function handleEditBtnClick() {
     if (!session) {
-      redirect('/login')
+      router.push('/login')
+      return
     }
+
+    setIsEditing(!isEditing)
+  }
+
+  function handleUpdateBtnClick() {
+    if (!session) {
+      router.push('/login')
+      return
+    }
+
+    if (!isCommentAllowed) {
+      return
+    }
+
+    const token = session.user.token
+
+    if (replyTo) {
+      const filteredReply = filterReply(editedComment.trim(), replyTo).trim()
+      mutate({ newContent: filteredReply, commentId, token })
+      return
+    }
+
+    mutate({ newContent: editedComment.trim(), commentId, token })
   }
 
   function handleDeleteBtnClick() {
     if (!session) {
-      redirect('/login')
+      router.push('/login')
     }
 
     setShowDeleteCommentModal(true)
@@ -71,6 +138,43 @@ export default function Comment({
 
   function closeDeleteCommentModal() {
     setShowDeleteCommentModal(false)
+  }
+
+  function handleChangeContent(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    const value = e.target.value
+    setEditedComment(value)
+  }
+
+  function checkCommentAllowed() {
+    if (!replyTo) {
+      if (
+        isEmptyOrSpaces(editedComment.trim()) ||
+        editedComment.trim() === comment.trim()
+      ) {
+        setIsCommentAllowed(false)
+        return
+      }
+
+      setIsCommentAllowed(true)
+      return
+    } else {
+      if (replyTo) {
+        const filteredReply = filterReply(editedComment.trim(), replyTo)
+
+        if (
+          isEmptyOrSpaces(filteredReply.trim()) ||
+          filteredReply.trim() === comment.trim()
+        ) {
+          setIsCommentAllowed(false)
+          return
+        }
+
+        setIsCommentAllowed(true)
+        return
+      }
+
+      return
+    }
   }
 
   return (
@@ -102,6 +206,9 @@ export default function Comment({
               <span tabIndex={0} className="ml-4 text-textBody">
                 {formattedTimeDifference} ago
               </span>
+              {isUpdated && (
+                <span className="ml-2 text-textBody">{'(edited)'}</span>
+              )}
             </div>
             <div className="flex items-center gap-x-4">
               {!isYou && (
@@ -141,12 +248,44 @@ export default function Comment({
               )}
             </div>
           </div>
-          <p tabIndex={0} className="break-words leading-normal text-textBody">
-            {replyTo && (
-              <span className="mr-1 font-medium text-target">@{replyTo}</span>
-            )}
-            {content}
-          </p>
+          {isEditing ? (
+            <div>
+              <textarea
+                autoFocus={isEditing}
+                className="flex h-24 w-full items-center rounded-xl border-2 px-6 py-3 pr-10 text-textBody outline-none transition-colors hover:border-target focus:border-target"
+                placeholder={`Add a ${replyTo ? 'reply' : 'content'}...`}
+                value={editedComment}
+                onChange={handleChangeContent}
+                onFocus={(e) =>
+                  e.currentTarget.setSelectionRange(
+                    e.currentTarget.value.length,
+                    e.currentTarget.value.length
+                  )
+                }
+              ></textarea>
+              <div className="mt-3 inline-flex w-full justify-end">
+                <div>
+                  <button
+                    className={`w-full ${isCommentAllowed ? 'bg-target' : 'bg-targetInactive'} min-w-24 rounded-xl bg-target py-3 font-bold text-primary transition-colors hover:bg-targetInactive`}
+                    disabled={!isCommentAllowed}
+                    onClick={handleUpdateBtnClick}
+                  >
+                    UPDATE
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <p
+              tabIndex={0}
+              className="break-words leading-normal text-textBody"
+            >
+              {replyTo && (
+                <span className="mr-1 font-medium text-target">@{replyTo}</span>
+              )}
+              {comment}
+            </p>
+          )}
         </div>
       </div>
       {showAddCommentReply && (
