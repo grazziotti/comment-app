@@ -5,10 +5,14 @@ import { useEffect, useState } from 'react'
 import AddComment from '../AddComment'
 import DeleteCommentModal from './DeleteCommentModal'
 
+import { useAddVote } from '@/hooks/useAddVote'
+import { useDeleteVote } from '@/hooks/useDeleteVote'
 import { useUpdateComment } from '@/hooks/useUpdateComment'
+import { useUpdateVote } from '@/hooks/useUpdateVote'
 import { filterReply } from '@/utils/filterReply'
 import { formatRelativeTime } from '@/utils/formatRelativeTime'
 import { isEmptyOrSpaces } from '@/utils/isEmptyOrSpaces'
+import { useQueryClient } from '@tanstack/react-query'
 import { Minus, Pencil, Plus, Reply, Trash2 } from 'lucide-react'
 
 type Props = {
@@ -19,6 +23,10 @@ type Props = {
   score: number
   replyTo?: string
   updated?: boolean
+  voted?: {
+    voteId: string
+    voteType: 'upVote' | 'downVote' | null
+  }
 }
 
 export default function Comment({
@@ -28,11 +36,17 @@ export default function Comment({
   createdAt,
   score,
   replyTo,
-  updated
+  updated,
+  voted
 }: Props) {
   const { data: session } = useSession()
-  const { mutate, isSuccess: updateSuccess } = useUpdateComment()
+  const { mutate: updateComment, isSuccess: updateSuccess } = useUpdateComment()
+  const { mutate: addVote, isSuccess: successVoted } = useAddVote()
+  const { mutate: updateVote, isSuccess: updateVoteSucess } = useUpdateVote()
+  const { mutate: deleteVote, isSuccess: deleteVoteSuccess } = useDeleteVote()
+
   const router = useRouter()
+  const queryClient = useQueryClient()
 
   const currentTime = new Date()
   const createdAtDate = new Date(createdAt)
@@ -68,7 +82,13 @@ export default function Comment({
   }, [updateSuccess])
 
   useEffect(() => {
-    checkCommentAllowed()
+    if (successVoted || updateVoteSucess) {
+      queryClient.invalidateQueries({ queryKey: ['comment-data'] })
+    }
+  }, [successVoted, updateVoteSucess, deleteVoteSuccess])
+
+  useEffect(() => {
+    checkCommentUpdateAllowed()
   }, [editedComment])
 
   useEffect(() => {
@@ -107,45 +127,7 @@ export default function Comment({
     setIsEditing(!isEditing)
   }
 
-  function handleUpdateBtnClick() {
-    if (!session) {
-      router.push('/login')
-      return
-    }
-
-    if (!isCommentAllowed) {
-      return
-    }
-
-    const token = session.user.token
-
-    if (replyTo) {
-      const filteredReply = filterReply(editedComment.trim(), replyTo).trim()
-      mutate({ newContent: filteredReply, commentId, token })
-      return
-    }
-
-    mutate({ newContent: editedComment.trim(), commentId, token })
-  }
-
-  function handleDeleteBtnClick() {
-    if (!session) {
-      router.push('/login')
-    }
-
-    setShowDeleteCommentModal(true)
-  }
-
-  function closeDeleteCommentModal() {
-    setShowDeleteCommentModal(false)
-  }
-
-  function handleChangeContent(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    const value = e.target.value
-    setEditedComment(value)
-  }
-
-  function checkCommentAllowed() {
+  function checkCommentUpdateAllowed() {
     if (!replyTo) {
       if (
         isEmptyOrSpaces(editedComment.trim()) ||
@@ -177,17 +159,90 @@ export default function Comment({
     }
   }
 
+  function handleUpdateBtnClick() {
+    if (!session) {
+      router.push('/login')
+      return
+    }
+
+    if (!isCommentAllowed) {
+      return
+    }
+
+    const token = session.user.token
+
+    if (replyTo) {
+      const filteredReply = filterReply(editedComment.trim(), replyTo).trim()
+      updateComment({ newContent: filteredReply, commentId, token })
+      return
+    }
+
+    updateComment({ newContent: editedComment.trim(), commentId, token })
+  }
+
+  function handleDeleteBtnClick() {
+    if (!session) {
+      router.push('/login')
+    }
+
+    setShowDeleteCommentModal(true)
+  }
+
+  function closeDeleteCommentModal() {
+    setShowDeleteCommentModal(false)
+  }
+
+  function handleChangeContent(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    const value = e.target.value
+    setEditedComment(value)
+  }
+
+  function handleVoteBtnClick(type: string) {
+    if (!session) {
+      router.push('/login')
+      return
+    }
+
+    if (session.user.name === username) return
+
+    if (!voted?.voteType) {
+      addVote({
+        data: { commentId, voteType: type },
+        token: session.user.token
+      })
+    } else {
+      if (voted.voteType !== type) {
+        updateVote({
+          voteType: type,
+          token: session.user.token,
+          voteId: voted.voteId
+        })
+      } else {
+        deleteVote({
+          voteId: voted.voteId,
+          token: session.user.token
+        })
+      }
+    }
+  }
+
   return (
     <div>
       <div className="mt-6 flex w-full rounded-xl bg-white p-6">
         <div className="inline-flex flex-col items-center gap-y-3 rounded-xl bg-secondary px-3 py-2">
-          <button className="flex h-5 w-5 items-center justify-center text-targetInactive transition-colors hover:text-target">
+          <button
+            onClick={() => handleVoteBtnClick('upVote')}
+            className={`${voted && voted.voteType === 'upVote' ? 'text-target' : 'text-targetInactive'} flex h-5 w-5 items-center justify-center transition-colors hover:text-target`}
+          >
             <Plus size={15} strokeWidth={4} />
           </button>
           <span tabIndex={0} className="font-bold text-target">
             {score}
           </span>
-          <button className="flex h-5 w-5 items-center justify-center text-targetInactive transition-colors hover:text-target">
+          <button
+            onClick={() => handleVoteBtnClick('downVote')}
+            className={`${voted && voted.voteType === 'downVote' ? 'text-target' : 'text-targetInactive'} flex h-5 w-5 items-center justify-center transition-colors hover:text-target`}
+          >
             <Minus size={15} strokeWidth={4} />
           </button>
         </div>
