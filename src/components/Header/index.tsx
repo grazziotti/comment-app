@@ -1,19 +1,23 @@
 import { getServerSession } from 'next-auth'
 
 import Container from '../Container'
-import Logo from './Logo'
+import Logged from './Logged'
 import NavLinks from './NavLinks'
 
 export default async function Header() {
   const session = await getServerSession()
 
   return (
-    <header className="py-6">
+    <header className="pt-6">
       <Container>
-        <div className="flex items-center justify-between rounded-xl bg-primary p-6 shadow-sm">
-          <Logo />
+        <div className="relative flex items-center justify-end rounded-xl bg-primary p-6 shadow-sm">
           {!session && <NavLinks />}
-          {session && <div>{session.user.name}</div>}
+          {session && (
+            <>
+              <div className="text-textTitle">{session?.user.name}</div>
+              <Logged />
+            </>
+          )}
         </div>
       </Container>
     </header>
