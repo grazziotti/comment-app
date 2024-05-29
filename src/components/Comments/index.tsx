@@ -1,45 +1,24 @@
 'use client'
 
-import Comment from './Comment'
-import CommentSkeleton from './Comment/CommentSkeleton'
+import { useSession } from 'next-auth/react'
+import { useEffect, useState } from 'react'
 
-import { usePublicCommentData } from '@/hooks/usePublicCommentData'
+import AddComment from './AddComment'
+import CommentList from './CommentList'
 
 export default function Comments() {
-  const { isPending, error, data } = usePublicCommentData()
+  const { data: session } = useSession()
+  const [commentListType, setCommentListType] = useState<string>('')
 
-  if (error) return 'An error has occurred: ' + error.message
+  useEffect(() => {
+    const type = session ? 'private' : 'public'
+    setCommentListType(type)
+  }, [session])
 
   return (
-    <ul>
-      {isPending && <CommentSkeleton count={4} />}
-      {data &&
-        data.map((comment) => (
-          <li key={comment.id}>
-            <Comment
-              username={comment.user.username}
-              createdAt={comment.createdAt}
-              content={comment.content}
-              score={comment.score}
-            />
-            {comment.replies && (
-              <ul className="border-l-[rgb(234, 236, 241)] ml-11 border-l-2 pl-11">
-                {comment.replies.map((reply) => (
-                  <li key={reply.id}>
-                    {' '}
-                    <Comment
-                      username={comment.user.username}
-                      createdAt={comment.createdAt}
-                      content={comment.content}
-                      score={comment.score}
-                      replyTo={reply.replyTo?.user.username}
-                    />
-                  </li>
-                ))}
-              </ul>
-            )}
-          </li>
-        ))}
-    </ul>
+    <div className="my-6">
+      <CommentList type={commentListType} token={session?.user.token} />
+      <AddComment />
+    </div>
   )
 }
