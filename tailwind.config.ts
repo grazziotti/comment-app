@@ -15,7 +15,10 @@ const config: Config = {
         textBody: 'rgb(var(--color-text-body) / <alpha-value>)',
         target: 'rgb(var(--color-target) / <alpha-value>)',
         targetInactive: 'rgb(var(--color-target-inactive) / <alpha-value>)',
-        delete: 'rgb(var(--color-delete) / <alpha-value>)'
+        deleteColor: 'rgb(var(--color-delete) / <alpha-value>)'
+      },
+      screens: {
+        sm: { max: '750px' }
       }
     }
   },

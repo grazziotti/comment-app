@@ -10,8 +10,8 @@ type Props = {
 
 export default function AuthModal({ type, useAnchorTag }: Props) {
   return (
-    <div className="fixed left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rounded-xl bg-primary p-12">
-      <h2 className="text-textTile text-center text-3xl font-bold">
+    <div className="fixed left-1/2 top-1/2 z-20 flex -translate-x-1/2 -translate-y-1/2 flex-col rounded-xl bg-primary p-12 sm:w-[90%] sm:items-center sm:justify-center">
+      <h2 className="text-center text-3xl font-bold text-textTitle">
         {type === 'login' ? 'Login' : 'Sign Up'}
       </h2>
       {type === 'login' ? <LoginForm /> : <SignUpForm />}

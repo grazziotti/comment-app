@@ -228,28 +228,32 @@ export default function Comment({
 
   return (
     <div>
-      <div className="mt-6 flex w-full rounded-xl bg-white p-6">
-        <div className="inline-flex flex-col items-center gap-y-3 rounded-xl bg-secondary px-3 py-2">
-          <button
-            onClick={() => handleVoteBtnClick('upVote')}
-            className={`${voted && voted.voteType === 'upVote' ? 'text-target' : 'text-targetInactive'} flex h-5 w-5 items-center justify-center transition-colors hover:text-target`}
-          >
-            <Plus size={15} strokeWidth={4} />
-          </button>
-          <span tabIndex={0} className="font-bold text-target">
-            {score}
-          </span>
-          <button
-            onClick={() => handleVoteBtnClick('downVote')}
-            className={`${voted && voted.voteType === 'downVote' ? 'text-target' : 'text-targetInactive'} flex h-5 w-5 items-center justify-center transition-colors hover:text-target`}
-          >
-            <Minus size={15} strokeWidth={4} />
-          </button>
+      <div className="mt-6 flex w-full rounded-xl bg-white p-6 sm:p-4">
+        <div>
+          <div className="inline-flex flex-col items-center gap-y-3 rounded-xl bg-secondary px-3 py-2 sm:hidden">
+            <button
+              onClick={() => handleVoteBtnClick('upVote')}
+              className={`${voted && voted.voteType === 'upVote' ? 'text-target' : 'text-targetInactive'} flex h-5 w-5 items-center justify-center transition-colors hover:text-target`}
+            >
+              <Plus size={15} strokeWidth={4} />
+            </button>
+            <span tabIndex={0} className="font-bold text-target">
+              {score}
+            </span>
+            <button
+              onClick={() => handleVoteBtnClick('downVote')}
+              className={`${voted && voted.voteType === 'downVote' ? 'text-target' : 'text-targetInactive'} flex h-5 w-5 items-center justify-center transition-colors hover:text-target`}
+            >
+              <Minus size={15} strokeWidth={4} />
+            </button>
+          </div>
         </div>
-        <div className="ml-6 flex w-full flex-col gap-y-3">
+        <div className="ml-6 flex w-full flex-col gap-y-3 sm:ml-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <div className="h-8 w-8 rounded-full bg-secondary"></div>
+              <div>
+                <div className="h-8 w-8 rounded-full bg-secondary"></div>
+              </div>
               <span tabIndex={0} className="ml-3 font-medium text-textTitle">
                 {username}
               </span>
@@ -258,12 +262,120 @@ export default function Comment({
                   you
                 </span>
               )}
-              <span tabIndex={0} className="ml-4 text-textBody">
+              <span tabIndex={0} className="ml-4 text-textBody sm:hidden">
                 {formattedTimeDifference} ago
               </span>
               {isUpdated && (
-                <span className="ml-2 text-textBody">{'(edited)'}</span>
+                <span className="ml-2 text-textBody sm:hidden">
+                  {'(edited)'}
+                </span>
               )}
+            </div>
+            <div className="flex items-center gap-x-4 sm:hidden">
+              {!isYou && (
+                <button
+                  onClick={handleReplyBtnClick}
+                  className="flex items-start gap-x-1 font-bold text-target transition-colors hover:text-targetInactive"
+                >
+                  <Reply size={18} strokeWidth={4} />
+                  Reply
+                </button>
+              )}
+              {isYou && (
+                <>
+                  <button
+                    onClick={handleDeleteBtnClick}
+                    className="flex items-start gap-x-1 font-bold text-deleteColor transition-colors hover:text-red-200"
+                  >
+                    <Trash2
+                      size={15}
+                      strokeWidth={4}
+                      className="translate-y-1"
+                    />
+                    Delete
+                  </button>
+                  <button
+                    onClick={handleEditBtnClick}
+                    className="flex items-start gap-x-1 font-bold text-target transition-colors hover:text-targetInactive"
+                  >
+                    <Pencil
+                      size={15}
+                      strokeWidth={4}
+                      className="translate-y-1"
+                    />
+                    Edit
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+          <div className="hidden sm:block">
+            <div className="flex items-center justify-between">
+              <div>
+                {isUpdated && (
+                  <span className="ml-2 hidden text-textBody sm:flex">
+                    {'(edited)'}
+                  </span>
+                )}
+              </div>
+              <span tabIndex={0} className="ml-4 text-textBody">
+                {formattedTimeDifference} ago
+              </span>
+            </div>
+          </div>
+          {isEditing ? (
+            <div>
+              <textarea
+                autoFocus={isEditing}
+                className="flex min-h-full w-full resize-none items-center rounded-xl border-2 px-6 py-3 pr-10 text-textBody outline-none transition-colors hover:border-target focus:border-target"
+                placeholder={`Add a ${replyTo ? 'reply' : 'content'}...`}
+                value={editedComment}
+                onChange={handleChangeContent}
+                onFocus={(e) =>
+                  e.currentTarget.setSelectionRange(
+                    e.currentTarget.value.length,
+                    e.currentTarget.value.length
+                  )
+                }
+              ></textarea>
+              <div className="mt-3 inline-flex w-full resize-none justify-end">
+                <div>
+                  <button
+                    className={`w-full ${isCommentAllowed ? 'bg-target' : 'bg-targetInactive'} min-w-24 rounded-xl bg-target py-3 font-bold text-primary transition-colors hover:bg-targetInactive`}
+                    disabled={!isCommentAllowed}
+                    onClick={handleUpdateBtnClick}
+                  >
+                    UPDATE
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <p tabIndex={0} className="break-all text-textBody">
+              {replyTo && (
+                <span className="mr-1 font-medium text-target">@{replyTo}</span>
+              )}
+              {comment}
+            </p>
+          )}
+
+          <div className="mt-3 hidden items-center justify-between sm:flex">
+            <div className="inline-flex items-center gap-x-3 rounded-xl bg-secondary px-3 py-2">
+              <button
+                onClick={() => handleVoteBtnClick('upVote')}
+                className={`${voted && voted.voteType === 'upVote' ? 'text-target' : 'text-targetInactive'} flex h-5 w-5 items-center justify-center transition-colors hover:text-target`}
+              >
+                <Plus size={15} strokeWidth={4} />
+              </button>
+              <span tabIndex={0} className="font-bold text-target">
+                {score}
+              </span>
+              <button
+                onClick={() => handleVoteBtnClick('downVote')}
+                className={`${voted && voted.voteType === 'downVote' ? 'text-target' : 'text-targetInactive'} flex h-5 w-5 items-center justify-center transition-colors hover:text-target`}
+              >
+                <Minus size={15} strokeWidth={4} />
+              </button>
             </div>
             <div className="flex items-center gap-x-4">
               {!isYou && (
@@ -303,44 +415,6 @@ export default function Comment({
               )}
             </div>
           </div>
-          {isEditing ? (
-            <div>
-              <textarea
-                autoFocus={isEditing}
-                className="flex h-24 w-full items-center rounded-xl border-2 px-6 py-3 pr-10 text-textBody outline-none transition-colors hover:border-target focus:border-target"
-                placeholder={`Add a ${replyTo ? 'reply' : 'content'}...`}
-                value={editedComment}
-                onChange={handleChangeContent}
-                onFocus={(e) =>
-                  e.currentTarget.setSelectionRange(
-                    e.currentTarget.value.length,
-                    e.currentTarget.value.length
-                  )
-                }
-              ></textarea>
-              <div className="mt-3 inline-flex w-full justify-end">
-                <div>
-                  <button
-                    className={`w-full ${isCommentAllowed ? 'bg-target' : 'bg-targetInactive'} min-w-24 rounded-xl bg-target py-3 font-bold text-primary transition-colors hover:bg-targetInactive`}
-                    disabled={!isCommentAllowed}
-                    onClick={handleUpdateBtnClick}
-                  >
-                    UPDATE
-                  </button>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <p
-              tabIndex={0}
-              className="break-words leading-normal text-textBody"
-            >
-              {replyTo && (
-                <span className="mr-1 font-medium text-target">@{replyTo}</span>
-              )}
-              {comment}
-            </p>
-          )}
         </div>
       </div>
       {showAddCommentReply && (
