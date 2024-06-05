@@ -1,14 +1,16 @@
 'use client'
 
-import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import Fieldset from '../Fieldset'
 import Input from '../Input'
+import Loader from '../Loader'
 
+import { useSignIn } from '@/hooks/useSignIn'
 import { checkPassword } from '@/utils/checkPassword'
 import { hasLetter } from '@/utils/hasLetter'
+import { Check } from 'lucide-react'
 
 export default function LoginForm() {
   const [username, setUsername] = useState('')
@@ -17,7 +19,9 @@ export default function LoginForm() {
   const [passwordError, setPasswordError] = useState<boolean>(false)
   const [loginError, setLoginError] = useState<boolean>(false)
   const [ableLoginButton, setAbleLoginButton] = useState<boolean>(false)
+
   const router = useRouter()
+  const { mutate, isPending, isSuccess, isError } = useSignIn()
 
   useEffect(() => {
     checkLoginButtonState()
@@ -75,8 +79,13 @@ export default function LoginForm() {
       return
     }
 
+    if (username.length < 4) {
+      setLoginError(true)
+      return
+    }
+
     const data = {
-      username: username.toLowerCase(),
+      username: username.toLowerCase().trim(),
       password
     }
 
@@ -85,21 +94,22 @@ export default function LoginForm() {
       return
     }
 
-    const loginResult = await signIn('credentials', {
-      ...data,
-      redirect: false
-    })
+    mutate(data)
+  }
 
-    if (loginResult?.status === 200) {
+  useEffect(() => {
+    if (isSuccess) {
+      setUsernameError(false)
+      setPasswordError(false)
       router.push('/')
-      router.refresh()
+      location.reload()
       return
     }
+  }, [isSuccess])
 
-    setUsernameError(false)
-    setPasswordError(false)
-    setLoginError(true)
-  }
+  useEffect(() => {
+    if (isError) setLoginError(true)
+  }, [isError])
 
   return (
     <form className="mt-6 max-w-72" onSubmit={login}>
@@ -150,10 +160,12 @@ export default function LoginForm() {
       </Fieldset>
       <button
         type="submit"
-        className={`mt-4 w-full ${!ableLoginButton && 'bg-targetInactive'} rounded-lg bg-target py-2 font-medium text-primary transition-colors hover:bg-targetInactive`}
+        className={`mt-4 flex w-full items-center justify-center ${!ableLoginButton && 'bg-targetInactive'} rounded-lg bg-target py-2 font-medium text-primary transition-colors hover:bg-targetInactive`}
         disabled={!ableLoginButton}
       >
-        Login
+        {isPending && <Loader />}
+        {isSuccess && <Check />}
+        {!isPending && <>{!isSuccess && 'Login'}</>}
       </button>
     </form>
   )

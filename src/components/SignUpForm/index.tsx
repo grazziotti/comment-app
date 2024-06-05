@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 
 import Fieldset from '../Fieldset'
 import Input from '../Input'
+import Loader from '../Loader'
 
 import { useSignUp } from '@/hooks/useSignUp'
 import { checkPassword } from '@/utils/checkPassword'
@@ -18,7 +19,7 @@ type PasswordErrorType = {
 }
 
 export default function SignUpForm() {
-  const { mutate, isSuccess, error } = useSignUp()
+  const { mutate, isSuccess, error, isPending } = useSignUp()
 
   // username states
   const [username, setUsername] = useState<string>('')
@@ -49,27 +50,27 @@ export default function SignUpForm() {
   useEffect(() => {
     const passwordErrorList = [
       {
-        message: 'Use pelo menos 8 caracteres',
+        message: 'Use at least 8 characters',
         isError: false,
         isSuccess: false
       },
       {
-        message: 'Uma letra minúscula',
+        message: 'One lowercase letter',
         isError: false,
         isSuccess: false
       },
       {
-        message: 'Uma letra maiúscula',
+        message: 'One uppercase letter',
         isError: false,
         isSuccess: false
       },
       {
-        message: 'Um número',
+        message: 'One number',
         isError: false,
         isSuccess: false
       },
       {
-        message: 'Um caractere especial',
+        message: 'One special character',
         isError: false,
         isSuccess: false
       }
@@ -94,17 +95,13 @@ export default function SignUpForm() {
   )
 
   useEffect(() => {
-    if (error) {
-      setSignUpErrors([`${error?.response.data.error}`])
-    } else {
-      setSignUpErrors([])
-    }
+    setSignUpErrors([`${error?.response.data.error}`])
   }, [error])
 
   // auth functions
   async function login() {
     await signIn('credentials', {
-      ...{ username, password },
+      ...{ username: username.toLowerCase().trim(), password },
       redirect: true
     })
   }
@@ -133,7 +130,7 @@ export default function SignUpForm() {
     }
 
     const signUpData = {
-      username: username.toLowerCase(),
+      username: username.toLowerCase().trim(),
       password
     }
 
@@ -151,11 +148,16 @@ export default function SignUpForm() {
 
     const newErrors: string[] = []
 
-    if (value.length < 2) {
-      newErrors.push('Use pelo menos 2 caracteres')
+    if (value.length < 4) {
+      newErrors.push('Use at least 4 characters')
     }
+
+    if (value.length > 19) {
+      newErrors.push('use a maximum of 20 characters')
+    }
+
     if (/^[^A-Za-z]*$/.test(value)) {
-      newErrors.push('Use pelo menos 1 letra')
+      newErrors.push('Use at least 1 letter')
     }
 
     if (signUpErrors.length > 0) setSignUpErrors([])
@@ -211,7 +213,7 @@ export default function SignUpForm() {
 
     setIsPasswordError(hasError)
     return newErrors
-    // if (value.length < 8) {
+
     //   newErrors[0].isError = true
     //   newErrors[0].isSuccess = false
     //   setIsPasswordError(true)
@@ -285,7 +287,7 @@ export default function SignUpForm() {
     setSignUpErrors([])
 
     if (confirmPassword.length > 0 && password !== confirmPassword) {
-      newErrors.push('Senhas não são iguais')
+      newErrors.push('Passwords do not match')
     }
 
     return newErrors
@@ -295,7 +297,7 @@ export default function SignUpForm() {
   function checkSignUpButtonState() {
     if (
       !isPasswordError &&
-      username.length > 1 &&
+      username.length > 3 &&
       password.length > 7 &&
       usernameErrors.length < 1 &&
       confirmPassword.length > 1 &&
@@ -408,7 +410,9 @@ export default function SignUpForm() {
         className={`mt-4 flex ${isSignUpButtonEnabled ? '' : 'bg-targetInactive'} w-full items-center justify-center rounded-lg bg-target py-2 font-medium text-primary transition-colors hover:bg-targetInactive`}
         disabled={!isSignUpButtonEnabled}
       >
-        Sign up
+        {!isPending && <>{!isSuccess && 'Sign Up'}</>}
+        {isPending && <Loader />}
+        {isSuccess && <Check />}
       </button>
     </form>
   )
