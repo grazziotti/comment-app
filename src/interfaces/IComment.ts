@@ -5,6 +5,10 @@ interface ICommentBase {
   updatedAt: Date | null
   score: number
   user: IUserInfo
+  voted?: {
+    voteId: string
+    voteType: 'upVote' | 'downVote' | null
+  }
 }
 
 export interface IComment extends ICommentBase {
@@ -13,6 +17,7 @@ export interface IComment extends ICommentBase {
 
 interface IUserInfo {
   username: string
+  avatar: string | null
 }
 
 export interface IReply extends ICommentBase {

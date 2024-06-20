@@ -1,6 +1,7 @@
 'use client'
 
 import { signIn } from 'next-auth/react'
+import Image from 'next/image'
 import { useEffect, useState } from 'react'
 
 import Fieldset from '../Fieldset'
@@ -10,7 +11,7 @@ import Loader from '../Loader'
 import { useSignUp } from '@/hooks/useSignUp'
 import { checkPassword } from '@/utils/checkPassword'
 import { hasLetter } from '@/utils/hasLetter'
-import { Check, X } from 'lucide-react'
+import { Check, Upload, X } from 'lucide-react'
 
 type PasswordErrorType = {
   message: string
@@ -25,6 +26,7 @@ export default function SignUpForm() {
   const [username, setUsername] = useState<string>('')
   const [usernameErrors, setUsernameErrors] = useState<string[]>([])
   const [showUsernameErrors, setShowUsernameErrors] = useState(false)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
   // password states
   const [password, setPassword] = useState<string>('')
@@ -46,6 +48,7 @@ export default function SignUpForm() {
   const [signUpErrors, setSignUpErrors] = useState<string[]>([])
   const [showSignUpErrors, setShowSignUpErrors] = useState(false)
   const [isSignUpButtonEnabled, setIsSignUpButtonEnabled] = useState(false)
+  const [imgURL, setImgURL] = useState('')
 
   useEffect(() => {
     const passwordErrorList = [
@@ -98,6 +101,16 @@ export default function SignUpForm() {
     setSignUpErrors([`${error?.response.data.error}`])
   }, [error])
 
+  useEffect(() => {
+    if (selectedFile) {
+      const newImageURL = URL.createObjectURL(selectedFile)
+      setImgURL(newImageURL)
+      return () => {
+        URL.revokeObjectURL(newImageURL)
+      }
+    }
+  }, [selectedFile])
+
   // auth functions
   async function login() {
     await signIn('credentials', {
@@ -129,12 +142,14 @@ export default function SignUpForm() {
       return
     }
 
-    const signUpData = {
-      username: username.toLowerCase().trim(),
-      password
+    const formData = new FormData()
+    if (selectedFile) {
+      formData.append('avatar', selectedFile)
     }
+    formData.append('username', username)
+    formData.append('password', password)
 
-    mutate(signUpData)
+    mutate(formData)
 
     setUsername(username)
     setPassword(password)
@@ -213,57 +228,6 @@ export default function SignUpForm() {
 
     setIsPasswordError(hasError)
     return newErrors
-
-    //   newErrors[0].isError = true
-    //   newErrors[0].isSuccess = false
-    //   setIsPasswordError(true)
-    // } else {
-    //   newErrors[0].isSuccess = true
-    //   newErrors[0].isError = false
-    //   setIsPasswordError(false)
-    // }
-
-    // if (value === value.toUpperCase()) {
-    //   newErrors[1].isError = true
-    //   newErrors[1].isSuccess = false
-    //   setIsPasswordError(true)
-    // } else {
-    //   newErrors[1].isSuccess = true
-    //   newErrors[1].isError = false
-    //   setIsPasswordError(false)
-    // }
-
-    // if (value === value.toLowerCase()) {
-    //   newErrors[2].isError = true
-    //   newErrors[2].isSuccess = false
-    //   setIsPasswordError(true)
-    // } else {
-    //   newErrors[2].isSuccess = true
-    //   newErrors[2].isError = false
-    //   setIsPasswordError(false)
-    // }
-
-    // if (!/\d/.test(value)) {
-    //   newErrors[3].isError = true
-    //   newErrors[3].isSuccess = false
-    //   setIsPasswordError(true)
-    // } else {
-    //   newErrors[3].isSuccess = true
-    //   newErrors[3].isError = false
-    //   setIsPasswordError(false)
-    // }
-
-    // if (!/[^\w\s]/.test(value)) {
-    //   newErrors[4].isError = true
-    //   newErrors[4].isSuccess = false
-    //   setIsPasswordError(true)
-    // } else {
-    //   newErrors[4].isSuccess = true
-    //   newErrors[4].isError = false
-    //   setIsPasswordError(false)
-    // }
-
-    // return newErrors
   }
 
   // confirm password functions
@@ -309,8 +273,39 @@ export default function SignUpForm() {
     setIsSignUpButtonEnabled(false)
   }
 
+  function handleUploadImage(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files ? e.target.files[0] : null
+    setSelectedFile(file)
+  }
+
   return (
     <form className="mt-6" onSubmit={signUp}>
+      <Fieldset>
+        <p className="text-textTitle">Avatar</p>
+        <div className="mb-4 flex items-center justify-center">
+          <label className="flex h-28 w-28 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-target text-primary">
+            <Upload />
+            <input
+              id="avatar"
+              name="avatar"
+              type="file"
+              accept="image/*"
+              multiple={false}
+              onChange={handleUploadImage}
+              className="hidden"
+            />
+            {imgURL && (
+              <Image
+                width={28}
+                height={28}
+                className="h-28 w-28 rounded-full"
+                src={imgURL}
+                alt="avatar"
+              />
+            )}
+          </label>
+        </div>
+      </Fieldset>
       <Fieldset>
         <div className="mb-4">
           <Input

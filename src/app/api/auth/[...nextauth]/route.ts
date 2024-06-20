@@ -48,7 +48,9 @@ const nextAuthOptions: NextAuthOptions = {
           return {
             id: authData.user.id,
             name: authData.user.username,
-            role: authData.user.role
+            role: authData.user.role,
+            avatar: authData.user.avatar,
+            token: authData.token
           }
         } catch (error) {
           return null
@@ -63,7 +65,9 @@ const nextAuthOptions: NextAuthOptions = {
         user: {
           ...session.user,
           id: token.id,
-          role: token.role
+          role: token.role,
+          avatar: token.avatar,
+          token: token.token
         }
       }
     },
@@ -73,7 +77,9 @@ const nextAuthOptions: NextAuthOptions = {
       return {
         id: merged.id,
         name: merged.name,
-        role: merged.role
+        role: merged.role,
+        avatar: merged.avatar,
+        token: merged.token
       }
     }
   }
