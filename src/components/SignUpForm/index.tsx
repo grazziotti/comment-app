@@ -146,7 +146,7 @@ export default function SignUpForm() {
     if (selectedFile) {
       formData.append('avatar', selectedFile)
     }
-    formData.append('username', username)
+    formData.append('username', username.toLowerCase().trim())
     formData.append('password', password)
 
     mutate(formData)
