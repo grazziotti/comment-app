@@ -340,7 +340,7 @@ export default function Comment({
             <div>
               <textarea
                 autoFocus={isEditing}
-                className="flex min-h-full w-full resize-none items-center rounded-xl border-2 px-6 py-3 pr-10 text-textBody outline-none transition-colors hover:border-target focus:border-target"
+                className="flex min-h-32 w-full resize-none items-center rounded-xl border-2 px-6 py-3 pr-10 text-textBody outline-none transition-colors hover:border-target focus:border-target"
                 placeholder={`Add a ${replyTo ? 'reply' : 'content'}...`}
                 value={editedComment}
                 onChange={handleChangeContent}
@@ -351,7 +351,7 @@ export default function Comment({
                   )
                 }
               ></textarea>
-              <div className="mt-3 inline-flex w-full resize-none justify-end">
+              <div className="mt-3 flex w-full justify-end">
                 <div>
                   <button
                     className={`w-full ${isCommentAllowed ? 'bg-target' : 'bg-targetInactive'} min-w-24 rounded-xl bg-target py-3 font-bold text-primary transition-colors hover:bg-targetInactive`}
