@@ -126,7 +126,7 @@ export default function SignUpForm() {
       return
     }
 
-    if (username.length <= 1) {
+    if (username.length <= 3) {
       return
     }
 
