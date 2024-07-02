@@ -1,4 +1,5 @@
 import { useSession } from 'next-auth/react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
@@ -109,7 +110,17 @@ export default function AddComment({ replyToId, replyTo, onDone }: Props) {
       </div>
       <div className="flex justify-between gap-x-6 sm:mt-6 sm:items-center">
         <div>
-          <div className="h-8 w-8 rounded-full bg-slate-200"></div>
+          {session?.user.avatar ? (
+            <Image
+              className="rounded-full"
+              width={32}
+              height={32}
+              src={`http://res.cloudinary.com/deqpaljom/image/upload/v1718304142/avatars/${session.user.avatar}`}
+              alt="profile avatar"
+            />
+          ) : (
+            <div className="h-8 w-8 rounded-full bg-secondary"></div>
+          )}
         </div>
         <textarea
           autoFocus={replyToId ? true : false}

@@ -1,4 +1,5 @@
 import { useSession } from 'next-auth/react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
@@ -19,6 +20,7 @@ type Props = {
   commentId: string
   content: string
   username: string
+  avatar: string | null
   createdAt: Date
   score: number
   replyTo?: string
@@ -33,6 +35,7 @@ export default function Comment({
   commentId,
   content,
   username,
+  avatar,
   createdAt,
   score,
   replyTo,
@@ -252,7 +255,17 @@ export default function Comment({
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <div>
-                <div className="h-8 w-8 rounded-full bg-secondary"></div>
+                {avatar !== null ? (
+                  <Image
+                    className="rounded-full"
+                    width={32}
+                    height={32}
+                    src={`http://res.cloudinary.com/deqpaljom/image/upload/v1718304142/avatars/${avatar}`}
+                    alt="profile avatar"
+                  />
+                ) : (
+                  <div className="h-8 w-8 rounded-full bg-secondary"></div>
+                )}
               </div>
               <span tabIndex={0} className="ml-3 font-medium text-textTitle">
                 {username}

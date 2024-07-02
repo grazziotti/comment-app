@@ -48,6 +48,7 @@ export default function CommentList({ type, token }: Props) {
             <Comment
               commentId={comment.id}
               username={comment.user.username}
+              avatar={comment.user.avatar}
               createdAt={comment.createdAt}
               content={comment.content}
               score={comment.score}
@@ -61,6 +62,7 @@ export default function CommentList({ type, token }: Props) {
                     <Comment
                       commentId={reply.id}
                       username={reply.user.username}
+                      avatar={reply.user.avatar}
                       createdAt={reply.createdAt}
                       content={reply.content}
                       score={reply.score}
