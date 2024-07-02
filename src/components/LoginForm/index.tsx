@@ -21,7 +21,7 @@ export default function LoginForm() {
   const [ableLoginButton, setAbleLoginButton] = useState<boolean>(false)
 
   const router = useRouter()
-  const { mutate, isPending, isSuccess, isError } = useSignIn()
+  const { mutate, isPending, data } = useSignIn()
 
   useEffect(() => {
     checkLoginButtonState()
@@ -98,18 +98,19 @@ export default function LoginForm() {
   }
 
   useEffect(() => {
-    if (isSuccess) {
+    if (!data) return
+
+    if (data?.status === 200) {
       setUsernameError(false)
       setPasswordError(false)
       router.push('/')
       location.reload()
       return
+    } else {
+      setLoginError(true)
+      return
     }
-  }, [isSuccess])
-
-  useEffect(() => {
-    if (isError) setLoginError(true)
-  }, [isError])
+  }, [data])
 
   return (
     <form className="mt-6 max-w-72" onSubmit={login}>
@@ -164,8 +165,8 @@ export default function LoginForm() {
         disabled={!ableLoginButton}
       >
         {isPending && <Loader />}
-        {isSuccess && <Check />}
-        {!isPending && <>{!isSuccess && 'Login'}</>}
+        {data?.status === 200 && <Check />}
+        {!isPending && <>{data?.status !== 200 && 'Login'}</>}
       </button>
     </form>
   )
