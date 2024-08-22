@@ -1,3 +1,4 @@
+import { signOut } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 
 import Comment from '../Comment'
@@ -12,7 +13,15 @@ type Props = {
 }
 
 export default function CommentList({ type, token }: Props) {
-  const { isPending, error, data } = useCommentData(type, token)
+  const { isPending, error, data, isError } = useCommentData(type, token)
+
+  useEffect(() => {
+    if (isError) {
+      if (error.message === 'Request failed with status code 401') {
+        signOut()
+      }
+    }
+  }, [isError])
 
   useEffect(() => {
     if (data) {

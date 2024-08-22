@@ -6,7 +6,7 @@ const API_URL = 'http://localhost:4000/api/v1'
 
 export const useCommentData = (route: string, token: string) => {
   const query = useQuery({
-    queryFn: async (): Promise<AxiosResponse<IComment[]>> => {
+    queryFn: async (): Promise<AxiosResponse<IComment[]> | undefined> => {
       const response = await axios.get<IComment[]>(
         API_URL + `/comments/${route}`,
         {
