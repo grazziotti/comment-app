@@ -85,7 +85,7 @@ export default function Comment({
   }, [updateSuccess])
 
   useEffect(() => {
-    if (successVoted || updateVoteSucess) {
+    if (successVoted || updateVoteSucess || deleteVoteSuccess) {
       queryClient.invalidateQueries({ queryKey: ['comment-data'] })
     }
   }, [successVoted, updateVoteSucess, deleteVoteSuccess])
