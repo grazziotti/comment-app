@@ -17,8 +17,8 @@ export default function Comments() {
 
   return (
     <div className="my-6">
-      <CommentList type={commentListType} token={session?.user.token} />
       <AddComment />
+      <CommentList type={commentListType} token={session?.user.token} />
     </div>
   )
 }
