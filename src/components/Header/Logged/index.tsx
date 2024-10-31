@@ -6,6 +6,8 @@ import { useState } from 'react'
 
 import LogoutBtn from '../LogoutBtn'
 
+import { ChevronDown } from 'lucide-react'
+
 export default function Logged() {
   const [showLogoutBtn, setShowLogoutBtn] = useState(false)
 
@@ -31,9 +33,9 @@ export default function Logged() {
           )}
         </div>
         <span
-          className={`${showLogoutBtn ? 'rotate-90' : '-rotate-90'} transition-all`}
+          className={`${showLogoutBtn && 'rotate-180'} transition-transform`}
         >
-          {'<'}
+          <ChevronDown />
         </span>
       </button>
       {showLogoutBtn && (
