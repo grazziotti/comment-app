@@ -14,7 +14,6 @@ type Props = {
 export default function CommentList({ type, token }: Props) {
   const { isPending, error, data, isError } = useCommentData(type, token)
   const [sortOrder, setSortOrder] = useState<'latest' | 'oldest'>(() => {
-    // Verifica o valor salvo no localStorage ao carregar
     return (
       (localStorage.getItem('commentSortOrder') as 'latest' | 'oldest') ||
       'latest'
@@ -22,7 +21,6 @@ export default function CommentList({ type, token }: Props) {
   })
 
   useEffect(() => {
-    // Salva o sortOrder sempre que ele é alterado
     localStorage.setItem('commentSortOrder', sortOrder)
   }, [sortOrder])
 
@@ -85,26 +83,8 @@ export default function CommentList({ type, token }: Props) {
                 score={comment.score}
                 updated={comment.updatedAt ? true : false}
                 voted={comment.voted}
+                replies={comment.replies}
               />
-              {comment.replies && (
-                <ul className="border-l-[rgb(234, 236, 241)] ml-11 border-l-2 pl-11 sm:ml-4 sm:pl-4">
-                  {comment.replies.map((reply) => (
-                    <li key={reply.id}>
-                      <Comment
-                        commentId={reply.id}
-                        username={reply.user.username}
-                        avatar={reply.user.avatar}
-                        createdAt={reply.createdAt}
-                        content={reply.content}
-                        score={reply.score}
-                        updated={reply.updatedAt ? true : false}
-                        replyTo={reply.replyTo?.user.username}
-                        voted={reply.voted}
-                      />
-                    </li>
-                  ))}
-                </ul>
-              )}
             </li>
           ))}
       </ul>

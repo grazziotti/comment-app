@@ -10,11 +10,12 @@ import { useAddVote } from '@/hooks/useAddVote'
 import { useDeleteVote } from '@/hooks/useDeleteVote'
 import { useUpdateComment } from '@/hooks/useUpdateComment'
 import { useUpdateVote } from '@/hooks/useUpdateVote'
+import { IReply } from '@/interfaces/IComment'
 import { filterReply } from '@/utils/filterReply'
 import { formatRelativeTime } from '@/utils/formatRelativeTime'
 import { isEmptyOrSpaces } from '@/utils/isEmptyOrSpaces'
 import { useQueryClient } from '@tanstack/react-query'
-import { Minus, Pencil, Plus, Reply, Trash2 } from 'lucide-react'
+import { ChevronDown, Minus, Pencil, Plus, Reply, Trash2 } from 'lucide-react'
 
 type Props = {
   commentId: string
@@ -29,6 +30,7 @@ type Props = {
     voteId: string
     voteType: 'upVote' | 'downVote' | null
   }
+  replies?: IReply[]
 }
 
 export default function Comment({
@@ -40,7 +42,8 @@ export default function Comment({
   score,
   replyTo,
   updated,
-  voted
+  voted,
+  replies
 }: Props) {
   const { data: session } = useSession()
   const { mutate: updateComment, isSuccess: updateSuccess } = useUpdateComment()
@@ -64,6 +67,13 @@ export default function Comment({
   const [isEditing, setIsEditing] = useState(false)
   const [editedComment, setEditedComment] = useState('')
   const [isUpdated, setIsUpdated] = useState<boolean>()
+
+  const [visibleRepliesCount, setVisibleRepliesCount] = useState(5)
+  const [showReplies, setShowReplies] = useState(false)
+
+  function handleShowMoreReplies() {
+    setVisibleRepliesCount((prevCount) => prevCount + 5)
+  }
 
   useEffect(() => {
     setComment(content)
@@ -434,9 +444,63 @@ export default function Comment({
         <AddComment
           replyToId={commentId}
           replyTo={username}
-          onDone={() => setShowAddReplyComment(false)}
+          onDone={() => {
+            setShowAddReplyComment(false)
+            setShowReplies(true)
+            setVisibleRepliesCount(
+              replies ? replies.length + 1 : visibleRepliesCount
+            )
+          }}
         />
       )}
+
+      {replies && replies.length > 0 && (
+        <>
+          <button
+            onClick={() => setShowReplies(!showReplies)}
+            className="mb-6 mt-3 flex items-center gap-x-1 pl-11 font-bold text-target transition-colors hover:text-targetInactive"
+          >
+            <span
+              className={`${showReplies && 'rotate-180'} transition-transform`}
+            >
+              <ChevronDown />
+            </span>
+            {replies.length} replies
+          </button>
+          {showReplies && (
+            <ul className="border-l-[rgb(234, 236, 241)] ml-11 border-l-2 pl-11 sm:ml-4 sm:pl-4">
+              {replies.slice(0, visibleRepliesCount).map((reply) => (
+                <li key={reply.id}>
+                  <Comment
+                    commentId={reply.id}
+                    username={reply.user.username}
+                    avatar={reply.user.avatar}
+                    createdAt={reply.createdAt}
+                    content={reply.content}
+                    score={reply.score}
+                    updated={reply.updatedAt ? true : false}
+                    replyTo={reply.replyTo?.user.username}
+                    voted={reply.voted}
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
+      )}
+
+      {replies && visibleRepliesCount < replies?.length && showReplies && (
+        <button
+          onClick={handleShowMoreReplies}
+          className="mt-4 flex items-center gap-x-1 pl-11 font-bold text-target transition-all hover:text-targetInactive"
+        >
+          <span className="rotate-180">
+            <Reply />
+          </span>
+          Show more replies
+        </button>
+      )}
+
       {showDeleteCommentModal && (
         <DeleteCommentModal
           commentId={commentId}
