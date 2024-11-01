@@ -48,7 +48,7 @@ export default function Input({
       )}
       <div className="relative flex items-center">
         <input
-          className={`mb-1 mt-1 ${isError ? 'border-deleteColor' : ''} flex w-full items-center rounded-xl border-2 px-4 py-2 pr-10 text-textBody outline-none transition-colors hover:border-target focus:border-target`}
+          className={`mb-1 mt-1 ${isError ? 'border-deleteColor' : 'border-secondary'} flex w-full items-center rounded-xl border-2 bg-primary  px-4 py-2 pr-10 text-textBody outline-none transition-colors hover:border-target focus:border-target`}
           id={id}
           type={type === 'text' ? 'text' : showPassword ? 'text' : 'password'}
           name={name}

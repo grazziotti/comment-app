@@ -7,7 +7,7 @@ export default function CommentSkeleton({ count }: Props) {
     .fill(0)
     .map((item, i) => (
       <div
-        className="mt-6 flex h-[152px] w-full rounded-xl bg-white p-6"
+        className="mt-6 flex h-[152px] w-full rounded-xl bg-primary p-6"
         key={i}
       >
         <div className="h-full max-h-[104px] w-full max-w-11 animate-pulse rounded-xl bg-secondary"></div>

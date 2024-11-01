@@ -5,6 +5,7 @@
 @layer base {
     :root {
       --color-primary: 255 255 255;
+      --color-secondary: 215 216 2200;
       --color-secondary: 245 246 250;
       --color-target: 84 87 182;
       --color-target-inactive: 195 196 239;
@@ -12,7 +13,17 @@
       --color-text-title: 50 65 82;
       --color-text-body: 103 114 126;
     }
-  
+
+    .dark {
+      --color-primary: 33 36 41; 
+      --color-secondary: 24 24 27; 
+      --color-target: 100 170 255; 
+      --color-target-inactive: 78 84 96; 
+      --color-delete: 255 65 54; 
+      --color-text-title: 215 220 225; 
+      --color-text-body: 150 160 180; 
+    }
+    
   html {
     scroll-behavior: smooth;
   }

@@ -64,7 +64,7 @@ export default function AddComment({ replyToId, replyTo, onDone }: Props) {
 
     if (!isCommentAllowed) return
 
-    const token = session.user.token
+    const token = session?.user.token
 
     if (replyToId && replyTo) {
       const replyData = {
@@ -75,7 +75,7 @@ export default function AddComment({ replyToId, replyTo, onDone }: Props) {
       addCommentReply({ data: replyData, token })
       return
     } else {
-      addComment({ content: comment.trim(), token: session.user.token })
+      addComment({ content: comment.trim(), token: session?.user.token })
     }
 
     setComment('')
@@ -101,7 +101,7 @@ export default function AddComment({ replyToId, replyTo, onDone }: Props) {
       <div className="hidden sm:flex">
         <textarea
           autoFocus={replyToId ? true : false}
-          className="flex h-24 w-full items-center rounded-xl border-2 px-6 py-3 pr-10 text-textBody outline-none transition-colors hover:border-target focus:border-target"
+          className="flex h-24 w-full items-center rounded-xl border-2 bg-primary px-6 py-3 pr-10 text-textBody outline-none transition-colors hover:border-target focus:border-target"
           placeholder={`Add a ${replyToId && replyTo ? 'reply' : 'comment'}...`}
           value={comment}
           onChange={handleChangeComment}
@@ -124,7 +124,7 @@ export default function AddComment({ replyToId, replyTo, onDone }: Props) {
         </div>
         <textarea
           autoFocus={replyToId ? true : false}
-          className="flex h-24 w-full items-center rounded-xl border-2 px-6 py-3 pr-10 text-textBody outline-none transition-colors hover:border-target focus:border-target sm:hidden"
+          className="flex h-24 w-full resize-none items-center rounded-xl border-2 border-secondary bg-primary px-6 py-3 pr-10 text-textBody outline-none transition-colors hover:border-target focus:border-target sm:hidden"
           placeholder={`Add a ${replyToId && replyTo ? 'reply' : 'comment'}...`}
           value={comment}
           onChange={handleChangeComment}

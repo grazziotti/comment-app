@@ -241,7 +241,7 @@ export default function Comment({
 
   return (
     <div>
-      <div className="mt-6 flex w-full rounded-xl bg-white p-6 sm:p-4">
+      <div className="mt-6 flex w-full rounded-xl bg-primary p-6 sm:p-4">
         <div>
           <div className="inline-flex flex-col items-center gap-y-3 rounded-xl bg-secondary px-3 py-2 sm:hidden">
             <button
@@ -350,8 +350,8 @@ export default function Comment({
             <div>
               <textarea
                 autoFocus={isEditing}
-                className="flex min-h-32 w-full resize-none items-center rounded-xl border-2 px-6 py-3 pr-10 text-textBody outline-none transition-colors hover:border-target focus:border-target"
-                placeholder={`Add a ${replyTo ? 'reply' : 'content'}...`}
+                className="flex min-h-32 w-full resize-none items-center rounded-xl border-2 bg-primary px-6 py-3 pr-10 text-textBody outline-none transition-colors hover:border-target focus:border-target"
+                placeholder={`Add a ${replyTo ? 'reply' : 'comment'}...`}
                 value={editedComment}
                 onChange={handleChangeContent}
                 onFocus={(e) =>
@@ -468,7 +468,7 @@ export default function Comment({
             {replies.length} replies
           </button>
           {showReplies && (
-            <ul className="border-l-[rgb(234, 236, 241)] ml-11 border-l-2 pl-11 sm:ml-4 sm:pl-4">
+            <ul className="border-l-[rgb(234, 236, 241)] ml-11 border-l-2 pl-11 dark:border-l-primary sm:ml-4 sm:pl-4">
               {replies.slice(0, visibleRepliesCount).map((reply) => (
                 <li key={reply.id}>
                   <Comment

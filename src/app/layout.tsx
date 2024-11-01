@@ -4,6 +4,7 @@ import { Rubik } from 'next/font/google'
 import './globals.css'
 
 import Header from '@/components/Header'
+import ThemeToggleButton from '@/components/ToggleThemeBtn'
 
 import ReactQueryProvider from '@/providers/ReactQueryProvider'
 import NextAuthSessionProvider from '@/providers/sessionProvider'
@@ -29,6 +30,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={rubik.className}>
+        <div className="fixed right-6 top-6">
+          <ThemeToggleButton />
+        </div>
         <NextAuthSessionProvider>
           <ReactQueryProvider>
             <Header />
