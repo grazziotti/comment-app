@@ -458,7 +458,7 @@ export default function Comment({
         <>
           <button
             onClick={() => setShowReplies(!showReplies)}
-            className="mb-6 mt-3 flex items-center gap-x-1 pl-11 font-bold text-target transition-colors hover:text-targetInactive"
+            className="mb-6 mt-3 flex items-center gap-x-1 pl-11 font-bold text-target transition-colors hover:text-targetInactive sm:pl-4"
           >
             <span
               className={`${showReplies && 'rotate-180'} transition-transform`}
@@ -492,7 +492,7 @@ export default function Comment({
       {replies && visibleRepliesCount < replies?.length && showReplies && (
         <button
           onClick={handleShowMoreReplies}
-          className="mt-4 flex items-center gap-x-1 pl-11 font-bold text-target transition-all hover:text-targetInactive"
+          className="mt-4 flex items-center gap-x-1 pl-11 font-bold text-target transition-all hover:text-targetInactive sm:pl-4"
         >
           <span className="rotate-180">
             <Reply />
