@@ -4,6 +4,7 @@ import { Rubik } from 'next/font/google'
 import './globals.css'
 
 import Header from '@/components/Header'
+import ScrollToTopBtn from '@/components/ScrollToTopBtn'
 
 import ReactQueryProvider from '@/providers/ReactQueryProvider'
 import NextAuthSessionProvider from '@/providers/sessionProvider'
@@ -38,6 +39,9 @@ export default function RootLayout({
             </main>
           </ReactQueryProvider>
         </NextAuthSessionProvider>
+        <div className="fixed bottom-6 right-6">
+          <ScrollToTopBtn />
+        </div>
       </body>
     </html>
   )
