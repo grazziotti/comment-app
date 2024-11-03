@@ -19,7 +19,8 @@ const config: Config = {
         deleteColor: 'rgb(var(--color-delete) / <alpha-value>)'
       },
       screens: {
-        sm: { max: '750px' }
+        sm: { max: '750px' },
+        lg: { max: '1050px' }
       }
     }
   },

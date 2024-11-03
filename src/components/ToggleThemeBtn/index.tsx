@@ -31,7 +31,7 @@ export default function ThemeToggleButton() {
       aria-label={
         theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
       }
-      className="rounded-full bg-primary p-2 text-textTitle transition-all hover:text-target"
+      className="rounded-full bg-primary p-3 text-textTitle shadow-lg transition-all hover:scale-105 hover:text-target"
     >
       {theme === 'dark' ? (
         <Sun aria-hidden="true" />

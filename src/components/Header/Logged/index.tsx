@@ -39,7 +39,7 @@ export default function Logged() {
         </span>
       </button>
       {showLogoutBtn && (
-        <div className=" rouded-xl absolute z-50 -translate-x-1/2 translate-y-full bg-primary p-4 shadow-lg">
+        <div className="rouded-xl absolute z-50 -translate-x-1/2 translate-y-full bg-primary p-4 shadow-lg">
           <LogoutBtn />
         </div>
       )}
