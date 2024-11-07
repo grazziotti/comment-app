@@ -11,12 +11,17 @@ import Loader from '../Loader'
 import { useSignUp } from '@/hooks/useSignUp'
 import { checkPassword } from '@/utils/checkPassword'
 import { hasLetter } from '@/utils/hasLetter'
+import axios, { AxiosError } from 'axios'
 import { Check, Upload, X } from 'lucide-react'
 
 type PasswordErrorType = {
   message: string
   isError: boolean
   isSuccess: boolean
+}
+
+const isAxiosError = (error: unknown): error is AxiosError => {
+  return axios.isAxiosError(error)
 }
 
 export default function SignUpForm() {
@@ -98,7 +103,12 @@ export default function SignUpForm() {
   )
 
   useEffect(() => {
-    setSignUpErrors([`${error?.response.data.error}`])
+    if (error && isAxiosError(error) && error.response) {
+      const errorMessage = (error.response.data as { error: string }).error
+      setSignUpErrors([errorMessage])
+    } else if (error) {
+      setSignUpErrors(['An unknown error occurred'])
+    }
   }, [error])
 
   useEffect(() => {
