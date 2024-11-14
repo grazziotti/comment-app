@@ -7,7 +7,7 @@ interface IUpdateVote {
   token: string
 }
 
-const API_URL = 'http://localhost:4000/api/v1'
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 const postData = async ({ voteId, voteType, token }: IUpdateVote) => {
   const response = await axios.put(

@@ -9,7 +9,7 @@ interface ICreateVote {
   token: string
 }
 
-const API_URL = 'http://localhost:4000/api/v1'
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 const postData = async ({ data, token }: ICreateVote) => {
   const response = await axios.post(API_URL + '/votes', data, {

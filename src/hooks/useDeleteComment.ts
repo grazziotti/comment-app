@@ -6,7 +6,7 @@ interface ICreateComment {
   token: string
 }
 
-const API_URL = 'http://localhost:4000/api/v1'
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 const deleteData = async ({ commentId, token }: ICreateComment) => {
   const response = await axios.delete(API_URL + `/comments/${commentId}`, {

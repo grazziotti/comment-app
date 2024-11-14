@@ -6,7 +6,7 @@ interface IDeleteVote {
   token: string
 }
 
-const API_URL = 'http://localhost:4000/api/v1'
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 const deleteData = async ({ voteId, token }: IDeleteVote) => {
   const response = await axios.delete(API_URL + `/votes/${voteId}`, {

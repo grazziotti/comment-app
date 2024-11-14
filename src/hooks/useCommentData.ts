@@ -2,7 +2,9 @@ import { IComment } from '@/interfaces/IComment'
 import { useQuery } from '@tanstack/react-query'
 import axios, { AxiosResponse } from 'axios'
 
-const API_URL = 'http://localhost:4000/api/v1'
+const API_URL = process.env.NEXT_PUBLIC_API_URL
+
+console.log(process.env.API_URL)
 
 export const useCommentData = (route: string, token: string) => {
   const query = useQuery({
