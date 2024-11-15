@@ -3,6 +3,10 @@ import { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { cookies } from 'next/headers'
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL
+  ? process.env.NEXT_PUBLIC_API_URL
+  : 'http://localhost:4000/api/v1'
+
 const nextAuthOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt'
@@ -21,19 +25,16 @@ const nextAuthOptions: NextAuthOptions = {
         }
 
         try {
-          const response = await fetch(
-            'http://localhost:4000/api/v1/sessions/',
-            {
-              method: 'POST',
-              headers: {
-                'Content-type': 'application/json'
-              },
-              body: JSON.stringify({
-                username: credentials.username,
-                password: credentials.password
-              })
-            }
-          )
+          const response = await fetch(`${API_URL}/sessions/`, {
+            method: 'POST',
+            headers: {
+              'Content-type': 'application/json'
+            },
+            body: JSON.stringify({
+              username: credentials.username,
+              password: credentials.password
+            })
+          })
 
           if (response.status !== 200) {
             return null
@@ -43,7 +44,12 @@ const nextAuthOptions: NextAuthOptions = {
 
           if (!authData.token) return null
 
-          cookies().set('jwt', authData.token)
+          cookies().set('jwt', authData.token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 60 * 60 * 24 * 7
+          })
 
           return {
             id: authData.user.id,
