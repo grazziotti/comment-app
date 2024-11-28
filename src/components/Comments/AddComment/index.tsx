@@ -115,7 +115,7 @@ export default function AddComment({ replyToId, replyTo, onDone }: Props) {
               className="rounded-full"
               width={32}
               height={32}
-              src={`http://res.cloudinary.com/deqpaljom/image/upload/v1718304142/avatars/${session.user.avatar}`}
+              src={`http://res.cloudinary.com/dfmx2uzdr/image/upload/v1718304142/comment-app-avatars/${session.user.avatar}`}
               alt="profile avatar"
             />
           ) : (

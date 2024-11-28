@@ -271,7 +271,7 @@ export default function Comment({
                     className="rounded-full"
                     width={32}
                     height={32}
-                    src={`http://res.cloudinary.com/deqpaljom/image/upload/v1718304142/avatars/${avatar}`}
+                    src={`http://res.cloudinary.com/dfmx2uzdr/image/upload/v1718304142/comment-app-avatars/${avatar}`}
                     alt="profile avatar"
                   />
                 ) : (
