@@ -4,6 +4,8 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
+import Loader from '@/components/Loader'
+
 import AddComment from '../AddComment'
 import DeleteCommentModal from './DeleteCommentModal'
 
@@ -47,7 +49,11 @@ export default function Comment({
   replies
 }: Props) {
   const { data: session } = useSession()
-  const { mutate: updateComment, isSuccess: updateSuccess } = useUpdateComment()
+  const {
+    mutate: updateComment,
+    isSuccess: updateSuccess,
+    isPending: loadingUpdateComment
+  } = useUpdateComment()
   const {
     mutate: addVote,
     isSuccess: successVoted,
@@ -390,11 +396,12 @@ export default function Comment({
               <div className="mt-3 flex w-full justify-end">
                 <div>
                   <button
-                    className={`w-full ${isCommentAllowed ? 'bg-target' : 'bg-targetInactive'} min-w-24 rounded-xl bg-target py-3 font-bold text-primary transition-colors hover:bg-targetInactive`}
+                    className={`w-full ${isCommentAllowed ? 'bg-target' : 'bg-targetInactive'} flex min-w-24 justify-center rounded-xl bg-target py-3 font-bold text-primary transition-colors hover:bg-targetInactive`}
                     disabled={!isCommentAllowed}
                     onClick={handleUpdateBtnClick}
                   >
-                    UPDATE
+                    {loadingUpdateComment && <Loader />}
+                    {!loadingUpdateComment && 'UPDATE'}
                   </button>
                 </div>
               </div>

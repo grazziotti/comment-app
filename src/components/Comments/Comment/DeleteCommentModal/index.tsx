@@ -1,6 +1,8 @@
 import { useSession } from 'next-auth/react'
 import { useEffect } from 'react'
 
+import Loader from '@/components/Loader'
+
 import { useDeleteComment } from '@/hooks/useDeleteComment'
 import { useQueryClient } from '@tanstack/react-query'
 
@@ -16,7 +18,7 @@ export default function DeleteCommentModal({
   closeModal
 }: Props) {
   const { data: session } = useSession()
-  const { mutate, isSuccess } = useDeleteComment()
+  const { mutate, isSuccess, isPending } = useDeleteComment()
   const queryClient = useQueryClient()
 
   useEffect(() => {
@@ -59,9 +61,10 @@ export default function DeleteCommentModal({
           </button>
           <button
             onClick={deleteComment}
-            className="w-full rounded-xl bg-deleteColor py-3 font-bold text-primary transition-colors hover:bg-red-300"
+            className="flex w-full justify-center rounded-xl bg-deleteColor py-3 font-bold text-primary transition-colors hover:bg-red-300"
           >
-            YES, DELETE
+            {isPending && <Loader />}
+            {!isPending && 'YES, DELETE'}
           </button>
         </div>
       </div>

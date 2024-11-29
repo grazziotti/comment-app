@@ -3,6 +3,8 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
+import Loader from '@/components/Loader'
+
 import { useAddComment } from '@/hooks/useAddComment'
 import { useAddCommentReply } from '@/hooks/useAddCommentReply'
 import { filterReply } from '@/utils/filterReply'
@@ -20,9 +22,16 @@ export default function AddComment({ replyToId, replyTo, onDone }: Props) {
   const router = useRouter()
   const queryClient = useQueryClient()
 
-  const { mutate: addComment, isSuccess: commentAddSuccess } = useAddComment()
-  const { mutate: addCommentReply, isSuccess: replyAddSuccess } =
-    useAddCommentReply()
+  const {
+    mutate: addComment,
+    isSuccess: commentAddSuccess,
+    isPending: loadingAddComment
+  } = useAddComment()
+  const {
+    mutate: addCommentReply,
+    isSuccess: replyAddSuccess,
+    isPending: loadingAddCommentReply
+  } = useAddCommentReply()
   const [comment, setComment] = useState('')
   const [isCommentAllowed, setIsCommentAllowed] = useState<boolean>()
 
@@ -133,10 +142,11 @@ export default function AddComment({ replyToId, replyTo, onDone }: Props) {
         <div className="w-full max-w-24">
           <button
             onClick={handleSendButtonClick}
-            className={`w-full ${isCommentAllowed ? 'bg-target' : 'bg-targetInactive'} rounded-xl py-3 font-bold text-primary transition-colors hover:bg-targetInactive`}
+            className={`w-full ${isCommentAllowed ? 'bg-target' : 'bg-targetInactive'} flex justify-center rounded-xl py-3 font-bold text-primary transition-colors hover:bg-targetInactive`}
             disabled={!isCommentAllowed}
           >
-            {replyToId ? 'REPLY' : 'SEND'}
+            {!replyToId && <>{loadingAddComment ? <Loader /> : 'SEND'}</>}
+            {replyToId && <>{loadingAddCommentReply ? <Loader /> : 'REPLY'}</>}
           </button>
         </div>
       </div>
