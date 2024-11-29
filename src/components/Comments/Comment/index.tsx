@@ -424,7 +424,8 @@ export default function Comment({
                 <Plus size={15} strokeWidth={4} />
               </button>
               <span tabIndex={0} className="font-bold text-target">
-                {score}
+                {loadingVote && <span className="animate-pulse">...</span>}
+                {!loadingVote && score}
               </span>
               <button
                 onClick={() => handleVoteBtnClick('downVote')}
