@@ -48,9 +48,21 @@ export default function Comment({
 }: Props) {
   const { data: session } = useSession()
   const { mutate: updateComment, isSuccess: updateSuccess } = useUpdateComment()
-  const { mutate: addVote, isSuccess: successVoted } = useAddVote()
-  const { mutate: updateVote, isSuccess: updateVoteSucess } = useUpdateVote()
-  const { mutate: deleteVote, isSuccess: deleteVoteSuccess } = useDeleteVote()
+  const {
+    mutate: addVote,
+    isSuccess: successVoted,
+    isPending: loadingAddVote
+  } = useAddVote()
+  const {
+    mutate: updateVote,
+    isSuccess: updateVoteSucess,
+    isPending: loadingUpdateVote
+  } = useUpdateVote()
+  const {
+    mutate: deleteVote,
+    isSuccess: deleteVoteSuccess,
+    isPending: loadingDeleteVote
+  } = useDeleteVote()
 
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -71,6 +83,8 @@ export default function Comment({
 
   const [visibleRepliesCount, setVisibleRepliesCount] = useState(5)
   const [showReplies, setShowReplies] = useState(false)
+
+  const [loadingVote, setLoadingVote] = useState(false)
 
   function handleShowMoreReplies() {
     setVisibleRepliesCount((prevCount) => prevCount + 5)
@@ -96,10 +110,20 @@ export default function Comment({
   }, [updateSuccess])
 
   useEffect(() => {
+    if (loadingAddVote || loadingUpdateVote || loadingDeleteVote) {
+      setLoadingVote(true)
+    }
+  }, [loadingAddVote, loadingUpdateVote, loadingDeleteVote])
+
+  useEffect(() => {
     if (successVoted || updateVoteSucess || deleteVoteSuccess) {
       queryClient.invalidateQueries({ queryKey: ['comment-data'] })
     }
   }, [successVoted, updateVoteSucess, deleteVoteSuccess])
+
+  useEffect(() => {
+    setLoadingVote(false)
+  }, [score])
 
   useEffect(() => {
     checkCommentUpdateAllowed()
@@ -252,7 +276,8 @@ export default function Comment({
               <Plus size={15} strokeWidth={4} />
             </button>
             <span tabIndex={0} className="font-bold text-target">
-              {score}
+              {loadingVote && <span className="animate-pulse">...</span>}
+              {!loadingVote && score}
             </span>
             <button
               onClick={() => handleVoteBtnClick('downVote')}
