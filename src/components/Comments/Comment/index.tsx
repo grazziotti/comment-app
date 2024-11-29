@@ -168,6 +168,7 @@ export default function Comment({
       return
     }
 
+    checkCommentUpdateAllowed()
     setIsEditing(!isEditing)
   }
 
