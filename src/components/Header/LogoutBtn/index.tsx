@@ -16,7 +16,7 @@ export default function LogoutBtn() {
   return (
     <button
       onClick={handleLogoutBtnClick}
-      className="flex items-center gap-x-1 rounded-xl bg-deleteColor p-3 font-bold transition-colors"
+      className="flex items-center gap-x-1 rounded-xl bg-deleteColor p-3 font-bold text-primary transition-colors"
     >
       <LogOut width={18} height={18} className="rotate-180" />
       Logout
