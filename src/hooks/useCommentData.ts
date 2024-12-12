@@ -4,8 +4,6 @@ import axios, { AxiosResponse } from 'axios'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
-console.log(process.env.API_URL)
-
 export const useCommentData = (route: string, token: string) => {
   const query = useQuery({
     queryFn: async (): Promise<AxiosResponse<IComment[]> | undefined> => {
