@@ -13,16 +13,17 @@ type Props = {
 
 export default function CommentList({ type, token }: Props) {
   const { isPending, error, data, isError } = useCommentData(type, token)
-  const [sortOrder, setSortOrder] = useState<'latest' | 'oldest'>(() => {
-    return (
-      (localStorage.getItem('commentSortOrder') as 'latest' | 'oldest') ||
-      'latest'
-    )
-  })
+  const [sortOrder, setSortOrder] = useState<'latest' | 'oldest' | null>(null)
 
   useEffect(() => {
-    localStorage.setItem('commentSortOrder', sortOrder)
-  }, [sortOrder])
+    const storedSortOrder = localStorage.getItem('commentSortOrder') as
+      | 'latest'
+      | 'oldest'
+
+    if (storedSortOrder) {
+      setSortOrder(storedSortOrder)
+    }
+  }, [])
 
   useEffect(() => {
     if (isError) {
@@ -33,6 +34,11 @@ export default function CommentList({ type, token }: Props) {
   }, [isError])
 
   if (error) return 'An error has occurred: ' + error.message
+
+  const sortComments = (type: 'latest' | 'oldest') => {
+    setSortOrder(type)
+    localStorage.setItem('commentSortOrder', type)
+  }
 
   const sortedComments = data
     ? [...data].sort((a, b) => {
@@ -55,14 +61,14 @@ export default function CommentList({ type, token }: Props) {
         <div className="ml-2 flex gap-x-2">
           <button
             className={`${sortOrder === 'latest' ? 'text-target' : 'text-targetInactive'} transition-all hover:text-target`}
-            onClick={() => setSortOrder('latest')}
+            onClick={() => sortComments('latest')}
           >
             Latest
           </button>
           <span className="text-textTitle">|</span>
           <button
             className={`${sortOrder === 'oldest' ? 'text-target' : 'text-targetInactive'} transition-all hover:text-target`}
-            onClick={() => setSortOrder('oldest')}
+            onClick={() => sortComments('oldest')}
           >
             Oldest
           </button>
