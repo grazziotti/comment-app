@@ -7,8 +7,12 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL
 export const useCommentData = (route: string, token: string) => {
   const query = useQuery({
     queryFn: async (): Promise<AxiosResponse<IComment[]> | undefined> => {
+      if (!route) {
+        throw new Error('Route type is required')
+      }
+
       const response = await axios.get<IComment[]>(
-        API_URL + `/comments/${route}`,
+        `${API_URL}/comments/${route}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
