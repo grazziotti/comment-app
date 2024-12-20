@@ -1,24 +1,15 @@
-import Link from 'next/link'
+import LoginBtn from './LoginBtn'
+import SignUpBtn from './SignUpBtn'
 
 export default function NavLinks() {
   return (
     <nav className="flex items-center">
       <ul className="flex items-center gap-x-4">
         <li>
-          <Link
-            href={'/login'}
-            className="font-medium text-target transition-colors hover:text-targetInactive"
-          >
-            Login
-          </Link>
+          <LoginBtn />
         </li>
         <li>
-          <Link
-            href={'/signup'}
-            className="rounded-lg bg-target px-4 py-2 font-medium text-primary transition-colors hover:bg-targetInactive"
-          >
-            Sign Up
-          </Link>
+          <SignUpBtn />
         </li>
       </ul>
     </nav>
