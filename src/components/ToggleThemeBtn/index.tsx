@@ -1,38 +1,25 @@
 'use client'
 
+import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
 
 import { Moon, Sun } from 'lucide-react'
 
 export default function ThemeToggleButton() {
-  const [theme, setTheme] = useState<'light' | 'dark' | null>(null)
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem('theme') || 'light'
-    const validatedTheme = storedTheme === 'dark' ? 'dark' : 'light'
-    setTheme(validatedTheme)
-
-    if (storedTheme === 'dark') {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-    }
+    setMounted(true)
   }, [])
 
-  const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark'
-    setTheme(newTheme)
-    document.documentElement.classList.toggle('dark', newTheme === 'dark')
-    localStorage.setItem('theme', newTheme)
-  }
-
-  if (theme === null) {
+  if (!mounted) {
     return null
   }
 
   return (
     <button
-      onClick={toggleTheme}
+      onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
       aria-label={
         theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
       }

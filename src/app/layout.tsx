@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { ThemeProvider as NextThemeProvider } from 'next-themes'
 import { Rubik } from 'next/font/google'
 
 import './globals.css'
@@ -38,11 +39,13 @@ export default function RootLayout({
       <body className={rubik.className}>
         <NextAuthSessionProvider>
           <ReactQueryProvider>
-            <Header />
-            <main>
-              {parallels}
-              {children}
-            </main>
+            <NextThemeProvider attribute={'class'} enableSystem={false}>
+              <Header />
+              <main>
+                {parallels}
+                {children}
+              </main>
+            </NextThemeProvider>
           </ReactQueryProvider>
         </NextAuthSessionProvider>
         <div className="fixed bottom-6 right-6">
