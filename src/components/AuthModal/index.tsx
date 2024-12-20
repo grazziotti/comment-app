@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 import LoginForm from '../LoginForm'
 import SignUpForm from '../SignUpForm'
+import CloseAuthModalBtn from './CloseAuthModalBtn'
 
 import { MoveLeft, X } from 'lucide-react'
 
@@ -16,15 +17,15 @@ export default function AuthModal({ type, useAnchorTag }: Props) {
       <div className="w-full">
         {useAnchorTag ? (
           <div className="flex pb-12">
-            <Link href="/" className="-translate-x-1/2 text-textTitle">
-              <MoveLeft width={32} height={32} />
-            </Link>
+            <CloseAuthModalBtn>
+              <MoveLeft width={32} height={32} className="-translate-x-1/2" />
+            </CloseAuthModalBtn>
           </div>
         ) : (
           <div className="flex justify-end pb-12">
-            <Link href="/" className="translate-x-1/2 text-textTitle">
-              <X width={32} height={32} />
-            </Link>
+            <CloseAuthModalBtn>
+              <X width={32} height={32} className="translate-x-1/2" />
+            </CloseAuthModalBtn>
           </div>
         )}
       </div>
