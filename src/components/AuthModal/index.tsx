@@ -13,16 +13,16 @@ type Props = {
 
 export default function AuthModal({ type, useAnchorTag }: Props) {
   return (
-    <div className="fixed left-1/2 top-1/2 z-20 flex -translate-x-1/2 -translate-y-1/2 flex-col rounded-xl bg-primary p-12 pt-6 sm:relative sm:left-0 sm:top-0 sm:min-h-full sm:w-full sm:translate-x-0 sm:translate-y-0 sm:items-center sm:justify-center sm:rounded-none">
+    <div className="fixed left-1/2 top-1/2 z-20 flex -translate-x-1/2 -translate-y-1/2 flex-col rounded-xl bg-primary p-12 pt-6 sm:relative sm:left-0 sm:top-0 sm:min-h-full sm:w-full sm:translate-x-0 sm:translate-y-0 sm:items-center sm:justify-center sm:rounded-none sm:pt-24">
       <div className="w-full">
         {useAnchorTag ? (
-          <div className="flex pb-12">
+          <div className="flex pb-12 sm:absolute sm:left-12 sm:top-6">
             <CloseAuthModalBtn>
               <MoveLeft width={32} height={32} className="-translate-x-1/2" />
             </CloseAuthModalBtn>
           </div>
         ) : (
-          <div className="flex justify-end pb-12">
+          <div className="flex justify-end pb-12 sm:absolute sm:right-12 sm:top-6">
             <CloseAuthModalBtn>
               <X width={32} height={32} className="translate-x-1/2" />
             </CloseAuthModalBtn>
